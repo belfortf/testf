@@ -58,13 +58,12 @@ def swap_face(source_face: Face, target_face: Face, temp_frame: Frame) -> Frame:
 def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
     if roop.globals.many_faces:
         print("Processing many faces")
-        many_faces = get_many_faces(temp_frame)
-        print('Here is many_faces',many_faces)
-        print('Here is type of many_faces',type(many_faces))
+        largest_face = get_many_faces(temp_frame)
+        print('Here is many_faces',largest_face)
+        print('Here is type of many_faces',type(largest_face))
         
-        if many_faces:
-            if target_face:
-                temp_frame = swap_face(source_face, target_face, temp_frame)
+        if largest_face:
+            temp_frame = swap_face(source_face, largest_face, temp_frame)
     else:
         print("Processing one face")
         target_face = get_one_face(temp_frame)

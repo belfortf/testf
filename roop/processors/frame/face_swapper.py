@@ -51,7 +51,7 @@ def post_process() -> None:
 
 
 def swap_face(source_face: Face, target_face: Face, temp_frame: Frame) -> Frame:
-    print('Here is type of targetface',type(target_face), target_face)
+    
     return get_face_swapper().get(temp_frame, target_face, source_face, paste_back=True)
 
 
@@ -59,6 +59,9 @@ def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
     if roop.globals.many_faces:
         print("Processing many faces")
         many_faces = get_many_faces(temp_frame)
+        print('Here is many_faces',many_faces)
+        print('Here is type of many_faces',type(many_faces))
+        
         if many_faces:
             if target_face:
                 temp_frame = swap_face(source_face, target_face, temp_frame)

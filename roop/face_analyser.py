@@ -26,10 +26,18 @@ def get_one_face(frame: Frame) -> Any:
     except ValueError:
         return None
 
+#def get_many_faces(frame: Frame) -> Any:
+#    try:
+#        return get_face_analyser().get(frame)
+#    except IndexError:
+#        return None
 
 def get_many_faces(frame: Frame) -> Any:
     print("get_many_faces() called")
     faces = get_face_analyser().get(frame)
+    # Print the number of detected faces
+    if faces:
+        print(f"Detected {len(faces)} faces.")
     if not faces:
         return None
     # Retrieve the face with the largest bounding box
@@ -38,7 +46,7 @@ def get_many_faces(frame: Frame) -> Any:
     
     
     
-    try:
-        return get_face_analyser().get(frame)
-    except IndexError:
-        return None
+    # try:
+    #     return get_face_analyser().get(frame)
+    # except IndexError:
+    #     return None

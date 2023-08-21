@@ -51,6 +51,7 @@ def post_process() -> None:
 
 
 def swap_face(source_face: Face, target_face: Face, temp_frame: Frame) -> Frame:
+    print('Here is type of targetface',type(target_face), target_face)
     return get_face_swapper().get(temp_frame, target_face, source_face, paste_back=True)
 
 
@@ -59,7 +60,7 @@ def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
         print("Processing many faces")
         many_faces = get_many_faces(temp_frame)
         if many_faces:
-            for target_face in many_faces:
+            if target_face:
                 temp_frame = swap_face(source_face, target_face, temp_frame)
     else:
         print("Processing one face")

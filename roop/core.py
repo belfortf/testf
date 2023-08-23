@@ -65,6 +65,7 @@ def parse_args() -> None:
     roop.globals.video_quality = args.video_quality
     roop.globals.max_memory = args.max_memory
     roop.globals.execution_providers = decode_execution_providers(args.execution_provider)
+    print('core.py - parse_args() - decode_execution_providers():',roop.globals.execution_providers)
     roop.globals.execution_threads = args.execution_threads
 
 

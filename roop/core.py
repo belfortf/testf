@@ -32,6 +32,7 @@ warnings.filterwarnings('ignore', category=UserWarning, module='torchvision')
 
 
 def parse_args() -> None:
+    print('core.py - parse_args()')
     signal.signal(signal.SIGINT, lambda signal_number, frame: destroy())
     program = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=100))
     program.add_argument('-s', '--source', help='select an source image', dest='source_path')
@@ -68,25 +69,30 @@ def parse_args() -> None:
 
 
 def encode_execution_providers(execution_providers: List[str]) -> List[str]:
+    print('core.py - encode_execution_providers()')
     return [execution_provider.replace('ExecutionProvider', '').lower() for execution_provider in execution_providers]
 
 
 def decode_execution_providers(execution_providers: List[str]) -> List[str]:
+    print('core.py - decode_execution_providers()')
     return [provider for provider, encoded_execution_provider in zip(onnxruntime.get_available_providers(), encode_execution_providers(onnxruntime.get_available_providers()))
             if any(execution_provider in encoded_execution_provider for execution_provider in execution_providers)]
 
 
 def suggest_max_memory() -> int:
+    print('core.py - suggest_max_memory()')
     if platform.system().lower() == 'darwin':
         return 4
     return 16
 
 
 def suggest_execution_providers() -> List[str]:
+    print('core.py - suggest_execution_providers()')
     return encode_execution_providers(onnxruntime.get_available_providers())
 
 
 def suggest_execution_threads() -> int:
+    print('core.py - suggest_execution_threads()')
     if 'DmlExecutionProvider' in roop.globals.execution_providers:
         return 1
     if 'ROCMExecutionProvider' in roop.globals.execution_providers:
@@ -95,6 +101,7 @@ def suggest_execution_threads() -> int:
 
 
 def limit_resources() -> None:
+    print('core.py - limit_resources()')
     # prevent tensorflow memory leak
     gpus = tensorflow.config.experimental.list_physical_devices('GPU')
     for gpu in gpus:
@@ -116,11 +123,13 @@ def limit_resources() -> None:
 
 
 def release_resources() -> None:
+    print('core.py - release_resources()')
     if 'CUDAExecutionProvider' in roop.globals.execution_providers:
         torch.cuda.empty_cache()
 
 
 def pre_check() -> bool:
+    print('core.py - pre_check()')
     if sys.version_info < (3, 9):
         update_status('Python version is not supported - please upgrade to 3.9 or higher.')
         return False
@@ -131,12 +140,14 @@ def pre_check() -> bool:
 
 
 def update_status(message: str, scope: str = 'ROOP.CORE') -> None:
+    print('core.py - update_status()')
     print(f'[{scope}] {message}')
     if not roop.globals.headless:
         ui.update_status(message)
 
 
 def start() -> None:
+    print('core.py - start()')
     for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
         if not frame_processor.pre_start():
             return
@@ -195,12 +206,14 @@ def start() -> None:
 
 
 def destroy() -> None:
+    print('core.py - destroy()')
     if roop.globals.target_path:
         clean_temp(roop.globals.target_path)
     quit()
 
 
 def run() -> None:
+    print('core.py - run()')
     parse_args()
     if not pre_check():
         return

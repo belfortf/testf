@@ -8,6 +8,7 @@ MAX_PROBABILITY = 0.85
 
 
 def predict_frame(target_frame: Frame) -> bool:
+    print('predicter.py - predict_frame()')
     image = Image.fromarray(target_frame)
     image = opennsfw2.preprocess_image(image, opennsfw2.Preprocessing.YAHOO)
     model = opennsfw2.make_open_nsfw_model()
@@ -17,9 +18,11 @@ def predict_frame(target_frame: Frame) -> bool:
 
 
 def predict_image(target_path: str) -> bool:
+    print('predicter.py - predict_image()')
     return opennsfw2.predict_image(target_path) > MAX_PROBABILITY
 
 
 def predict_video(target_path: str) -> bool:
+    print('predicter.py - predict_video()')
     _, probabilities = opennsfw2.predict_video_frames(video_path=target_path, frame_interval=100)
     return any(probability > MAX_PROBABILITY for probability in probabilities)

@@ -10,6 +10,7 @@ THREAD_LOCK = threading.Lock()
 
 
 def get_face_analyser() -> Any:
+    print('face_analyser.py - get_face_analyser()')
     global FACE_ANALYSER
 
     with THREAD_LOCK:
@@ -20,6 +21,7 @@ def get_face_analyser() -> Any:
 
 
 def get_one_face(frame: Frame) -> Any:
+    print('face_analyser.py - get_one_face()')
     face = get_face_analyser().get(frame)
     try:
         return min(face, key=lambda x: x.bbox[0])
@@ -33,7 +35,7 @@ def get_one_face(frame: Frame) -> Any:
 #        return None
 
 def get_many_faces(frame: Frame) -> Any:
-    print("get_many_faces() called")
+    print('face_analyser.py - get_many_faces()')
     faces = get_face_analyser().get(frame)
     # Print the number of detected faces
     if faces:

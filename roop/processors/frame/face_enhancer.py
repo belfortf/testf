@@ -17,6 +17,7 @@ NAME = 'ROOP.FACE-ENHANCER'
 
 
 def get_face_enhancer() -> Any:
+    print('face_enhancer.py - get_face_enhancer()')
     global FACE_ENHANCER
 
     with THREAD_LOCK:
@@ -28,12 +29,14 @@ def get_face_enhancer() -> Any:
 
 
 def pre_check() -> bool:
+    print('face_enhancer.py - pre_check()')
     download_directory_path = resolve_relative_path('../models')
     conditional_download(download_directory_path, ['https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth'])
     return True
 
 
 def pre_start() -> bool:
+    print('face_enhancer.py - pre_start()')
     if not is_image(roop.globals.target_path) and not is_video(roop.globals.target_path):
         update_status('Select an image or video for target path.', NAME)
         return False
@@ -41,12 +44,14 @@ def pre_start() -> bool:
 
 
 def post_process() -> None:
+    print('face_enhancer.py - post_process()')
     global FACE_ENHANCER
 
     FACE_ENHANCER = None
 
 
 def enhance_face(temp_frame: Frame) -> Frame:
+    print('face_enhancer.py - enhance_face()')
     with THREAD_SEMAPHORE:
         _, _, temp_frame = get_face_enhancer().enhance(
             temp_frame,
@@ -56,6 +61,7 @@ def enhance_face(temp_frame: Frame) -> Frame:
 
 
 def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
+    print('face_enhancer.py - process_frame()')
     target_face = get_one_face(temp_frame)
     if target_face:
         temp_frame = enhance_face(temp_frame)
@@ -63,6 +69,7 @@ def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
 
 
 def process_frames(source_path: str, temp_frame_paths: List[str], update: Callable[[], None]) -> None:
+    print('face_enhancer.py - process_frames()')
     for temp_frame_path in temp_frame_paths:
         temp_frame = cv2.imread(temp_frame_path)
         result = process_frame(None, temp_frame)
@@ -72,10 +79,12 @@ def process_frames(source_path: str, temp_frame_paths: List[str], update: Callab
 
 
 def process_image(source_path: str, target_path: str, output_path: str) -> None:
+    print('face_enhancer.py - process_image()')
     target_frame = cv2.imread(target_path)
     result = process_frame(None, target_frame)
     cv2.imwrite(output_path, result)
 
 
 def process_video(source_path: str, temp_frame_paths: List[str]) -> None:
+    print('face_enhancer.py - process_video()')
     roop.processors.frame.core.process_video(None, temp_frame_paths, process_frames)

@@ -16,6 +16,7 @@ NAME = 'ROOP.FACE-SWAPPER'
 
 
 def get_face_swapper() -> Any:
+    print('face_swapper.py - get_face_swapper()')
     global FACE_SWAPPER
 
     with THREAD_LOCK:
@@ -26,12 +27,14 @@ def get_face_swapper() -> Any:
 
 
 def pre_check() -> bool:
+    print('face_swapper.py - pre_check()')
     download_directory_path = resolve_relative_path('../models')
     conditional_download(download_directory_path, ['https://huggingface.co/MonsterMMORPG/SECourses/resolve/main/inswapper_128.onnx'])
     return True
 
 
 def pre_start() -> bool:
+    print('face_swapper.py - pre_start()')
     if not is_image(roop.globals.source_path):
         update_status('Select an image for source path.', NAME)
         return False
@@ -45,17 +48,19 @@ def pre_start() -> bool:
 
 
 def post_process() -> None:
+    print('face_swapper.py - post_process()')
     global FACE_SWAPPER
 
     FACE_SWAPPER = None
 
 
 def swap_face(source_face: Face, target_face: Face, temp_frame: Frame) -> Frame:
-    
+    print('face_swapper.py - swap_face()')
     return get_face_swapper().get(temp_frame, target_face, source_face, paste_back=True)
 
 
 def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
+    print('face_swapper.py - process_frame()')
     if roop.globals.many_faces:
         print("Processing many faces")
         largest_face = get_many_faces(temp_frame)
@@ -74,6 +79,7 @@ def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
 
 
 def process_frames(source_path: str, temp_frame_paths: List[str], update: Callable[[], None]) -> None:
+    print('face_swapper.py - process_frames()')
     source_face = get_one_face(cv2.imread(source_path))
     for temp_frame_path in temp_frame_paths:
         temp_frame = cv2.imread(temp_frame_path)
@@ -84,6 +90,7 @@ def process_frames(source_path: str, temp_frame_paths: List[str], update: Callab
 
 
 def process_image(source_path: str, target_path: str, output_path: str) -> None:
+    print('face_swapper.py - process_image()')
     source_face = get_one_face(cv2.imread(source_path))
     target_frame = cv2.imread(target_path)
     result = process_frame(source_face, target_frame)
@@ -91,4 +98,5 @@ def process_image(source_path: str, target_path: str, output_path: str) -> None:
 
 
 def process_video(source_path: str, temp_frame_paths: List[str]) -> None:
+    print('face_swapper.py - process_video()')
     roop.processors.frame.core.process_video(source_path, temp_frame_paths, process_frames)

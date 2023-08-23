@@ -21,6 +21,7 @@ if platform.system().lower() == 'darwin':
 
 
 def run_ffmpeg(args: List[str]) -> bool:
+    print('utilities.py - run_ffmpeg()')
     commands = ['ffmpeg', '-hide_banner', '-hwaccel', 'auto', '-loglevel', roop.globals.log_level]
     commands.extend(args)
     try:
@@ -32,6 +33,7 @@ def run_ffmpeg(args: List[str]) -> bool:
 
 
 def detect_fps(target_path: str) -> float:
+    print('utilities.py - detect_fps()')
     command = ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=r_frame_rate', '-of', 'default=noprint_wrappers=1:nokey=1', target_path]
     output = subprocess.check_output(command).decode().strip().split('/')
     try:
@@ -43,17 +45,20 @@ def detect_fps(target_path: str) -> float:
 
 
 def extract_frames(target_path: str) -> None:
+    print('utilities.py - extract_frames()')
     temp_directory_path = get_temp_directory_path(target_path)
     run_ffmpeg(['-i', target_path, '-pix_fmt', 'rgb24', os.path.join(temp_directory_path, '%04d.png')])
 
 
 def create_video(target_path: str, fps: float = 30.0) -> None:
+    print('utilities.py - create_video()')
     temp_output_path = get_temp_output_path(target_path)
     temp_directory_path = get_temp_directory_path(target_path)
     run_ffmpeg(['-r', str(fps), '-i', os.path.join(temp_directory_path, '%04d.png'), '-c:v', roop.globals.video_encoder, '-crf', str(roop.globals.video_quality), '-pix_fmt', 'yuv420p', '-vf', 'colorspace=bt709:iall=bt601-6-625:fast=1', '-y', temp_output_path])
 
 
 def restore_audio(target_path: str, output_path: str) -> None:
+    print('utilities.py - restore_audio()')
     temp_output_path = get_temp_output_path(target_path)
     done = run_ffmpeg(['-i', temp_output_path, '-i', target_path, '-c:v', 'copy', '-map', '0:v:0', '-map', '1:a:0', '-y', output_path])
     if not done:
@@ -61,22 +66,26 @@ def restore_audio(target_path: str, output_path: str) -> None:
 
 
 def get_temp_frame_paths(target_path: str) -> List[str]:
+    print('utilities.py - get_temp_frame_paths()')
     temp_directory_path = get_temp_directory_path(target_path)
     return glob.glob((os.path.join(glob.escape(temp_directory_path), '*.png')))
 
 
 def get_temp_directory_path(target_path: str) -> str:
+    print('utilities.py - get_temp_directory_path()')
     target_name, _ = os.path.splitext(os.path.basename(target_path))
     target_directory_path = os.path.dirname(target_path)
     return os.path.join(target_directory_path, TEMP_DIRECTORY, target_name)
 
 
 def get_temp_output_path(target_path: str) -> str:
+    print('utilities.py - get_temp_output_path()')
     temp_directory_path = get_temp_directory_path(target_path)
     return os.path.join(temp_directory_path, TEMP_FILE)
 
 
 def normalize_output_path(source_path: str, target_path: str, output_path: str) -> Any:
+    print('utilities.py - normalize_output_path()')
     if source_path and target_path:
         source_name, _ = os.path.splitext(os.path.basename(source_path))
         target_name, target_extension = os.path.splitext(os.path.basename(target_path))
@@ -86,11 +95,13 @@ def normalize_output_path(source_path: str, target_path: str, output_path: str) 
 
 
 def create_temp(target_path: str) -> None:
+    print('utilities.py - create_temp()')
     temp_directory_path = get_temp_directory_path(target_path)
     Path(temp_directory_path).mkdir(parents=True, exist_ok=True)
 
 
 def move_temp(target_path: str, output_path: str) -> None:
+    print('utilities.py - move_temp()')
     temp_output_path = get_temp_output_path(target_path)
     if os.path.isfile(temp_output_path):
         if os.path.isfile(output_path):
@@ -99,6 +110,7 @@ def move_temp(target_path: str, output_path: str) -> None:
 
 
 def clean_temp(target_path: str) -> None:
+    print('utilities.py - clean_temp()')
     temp_directory_path = get_temp_directory_path(target_path)
     parent_directory_path = os.path.dirname(temp_directory_path)
     if not roop.globals.keep_frames and os.path.isdir(temp_directory_path):
@@ -108,10 +120,12 @@ def clean_temp(target_path: str) -> None:
 
 
 def has_image_extension(image_path: str) -> bool:
+    print('utilities.py - has_image_extension()')
     return image_path.lower().endswith(('png', 'jpg', 'jpeg', 'webp'))
 
 
 def is_image(image_path: str) -> bool:
+    print('utilities.py - is_image()')
     if image_path and os.path.isfile(image_path):
         mimetype, _ = mimetypes.guess_type(image_path)
         return bool(mimetype and mimetype.startswith('image/'))
@@ -119,6 +133,7 @@ def is_image(image_path: str) -> bool:
 
 
 def is_video(video_path: str) -> bool:
+    print('utilities.py - is_video()')
     if video_path and os.path.isfile(video_path):
         mimetype, _ = mimetypes.guess_type(video_path)
         return bool(mimetype and mimetype.startswith('video/'))
@@ -126,6 +141,7 @@ def is_video(video_path: str) -> bool:
 
 
 def conditional_download(download_directory_path: str, urls: List[str]) -> None:
+    print('utilities.py - conditional_download()')
     if not os.path.exists(download_directory_path):
         os.makedirs(download_directory_path)
     for url in urls:
@@ -138,4 +154,5 @@ def conditional_download(download_directory_path: str, urls: List[str]) -> None:
 
 
 def resolve_relative_path(path: str) -> str:
+    print('utilities.py - resolve_relative_path()')
     return os.path.abspath(os.path.join(os.path.dirname(__file__), path))

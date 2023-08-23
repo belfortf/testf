@@ -88,6 +88,7 @@ def suggest_max_memory() -> int:
 
 def suggest_execution_providers() -> List[str]:
     print('core.py - suggest_execution_providers()')
+    print('core.py - suggest_execution_providers() - onnxruntime.get_available_providers():', onnxruntime.get_available_providers())
     return encode_execution_providers(onnxruntime.get_available_providers())
 
 

@@ -63,13 +63,16 @@ def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
     print('face_swapper.py - process_frame()')
     if roop.globals.many_faces:
         print("Processing many faces")
-        largest_face = get_many_faces(temp_frame)
-        # print('Here is many_faces',largest_face)
-        # print('Here is type of many_faces',type(largest_face))
-        print("Largest face gender:",largest_face.gender)
-        print("Largest face age:",largest_face.age)
-        if largest_face:
-            temp_frame = swap_face(source_face, largest_face, temp_frame)
+        try:
+            largest_face = get_many_faces(temp_frame)
+            # print('Here is many_faces',largest_face)
+            # print('Here is type of many_faces',type(largest_face))
+            print("Largest face gender:",largest_face.gender)
+            print("Largest face age:",largest_face.age)
+            if largest_face:
+                temp_frame = swap_face(source_face, largest_face, temp_frame)
+        except Exception as e:
+            print('Exception was:', e)
     else:
         print("Processing one face")
         target_face = get_one_face(temp_frame)
